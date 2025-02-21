@@ -5,19 +5,11 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 */
 
 public class FFT {
-	public Complex[] input;
-	public Complex[] output;
 	public Complex[] factor;
 
 	private Complex tmp0, tmp1;
 
 	FFT(int length, int sign) {
-		input = new Complex[length];
-		for (int i = 0; i < length; ++i)
-			input[i] = new Complex();
-		output = new Complex[length];
-		for (int i = 0; i < length; ++i)
-			output[i] = new Complex();
 		factor = new Complex[length];
 		for (int i = 0; i < length; ++i) {
 			double x = (sign * 2.0 * Math.PI * i) / length;
@@ -36,22 +28,22 @@ public class FFT {
 		out1.set(tmp0).sub(tmp1);
 	}
 
-	void radix2(int O, int I, int N, int S) {
+	void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S) {
 		switch (N) {
 			case 1:
-				output[O].set(input[I]);
+				out[O].set(in[I]);
 				return;
 			case 2:
-				dft2(output[O], output[O + 1], input[I], input[I + S]);
+				dft2(out[O], out[O + 1], in[I], in[I + S]);
 				return;
 		}
-		radix2(O, I, N / 2, 2 * S);
-		radix2(O + N / 2, I + S, N / 2, 2 * S);
+		radix2(out, in, O, I, N / 2, 2 * S);
+		radix2(out, in, O + N / 2, I + S, N / 2, 2 * S);
 		for (int k0 = 0, k1 = N / 2; k0 < N / 2; ++k0, ++k1)
-			dft2(output[O + k0], output[O + k1], output[O + k0], output[O + k1].mul(factor[k0 * S]));
+			dft2(out[O + k0], out[O + k1], out[O + k0], out[O + k1].mul(factor[k0 * S]));
 	}
 
-	void trans() {
-		radix2(0, 0, input.length, 1);
+	void trans(Complex[] out, Complex[] in) {
+		radix2(out, in, 0, 0, factor.length, 1);
 	}
 }
