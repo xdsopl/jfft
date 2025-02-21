@@ -1,1 +1,3 @@
-# Playing with the Fast Fourier Transform in Java
+# Fast Fourier Transform in Java
+
+Supported are lengths that are powers of two
