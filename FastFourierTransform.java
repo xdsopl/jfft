@@ -6,7 +6,7 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 
 public class FastFourierTransform {
 	private Complex[] tf;
-	private Complex tmp0, tmp1;
+	private Complex tmp0, tmp1, tmp2, tmp3;
 
 	FastFourierTransform(int length) {
 		if (length < 2 || !isPowerOfTwo(length))
@@ -20,6 +20,8 @@ public class FastFourierTransform {
 		}
 		tmp0 = new Complex();
 		tmp1 = new Complex();
+		tmp2 = new Complex();
+		tmp3 = new Complex();
 	}
 
 	private boolean isPowerOfTwo(int n) {
@@ -31,9 +33,25 @@ public class FastFourierTransform {
 		out1.set(in0).sub(in1);
 	}
 
+	private void dft4(Complex out0, Complex out1, Complex out2, Complex out3, Complex in0, Complex in1, Complex in2, Complex in3) {
+		tmp0.set(in0).add(in2);
+		tmp1.set(in0).sub(in2);
+		tmp2.set(in1).add(in3);
+		tmp3.set(in1.imag - in3.imag, in3.real - in1.real);
+		out0.set(tmp0).add(tmp2);
+		out1.set(tmp1).add(tmp3);
+		out2.set(tmp0).sub(tmp2);
+		out3.set(tmp1).sub(tmp3);
+	}
+
 	private void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
 		if (N == 2) {
 			dft2(out[O], out[O + 1], in[I], in[I + S]);
+		} else if (N == 4) {
+			if (F)
+				dft4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+			else
+				dft4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 		} else {
 			radix2(out, in, O, I, N / 2, 2 * S, F);
 			radix2(out, in, O + N / 2, I + S, N / 2, 2 * S, F);
