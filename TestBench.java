@@ -15,8 +15,8 @@ public class TestBench {
 		Complex[] buf1 = new Complex[length];
 		Complex[] buf2 = new Complex[length];
 		for (int i = 0; i < length; ++i) {
-			float a = random.nextFloat() * 2 - 1;
-			float b = random.nextFloat() * 2 - 1;
+			double a = random.nextDouble() * 2 - 1;
+			double b = random.nextDouble() * 2 - 1;
 			buf0[i] = new Complex(a, b);
 		}
 		for (int i = 0; i < length; ++i)
@@ -27,7 +27,7 @@ public class TestBench {
 		fft.backward(buf2, buf1);
 		for (int i = 0; i < length; ++i)
 			buf2[i].div(length);
-		float maxError = 0;
+		double maxError = 0;
 		for (int i = 0; i < length; ++i)
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
 		System.out.println("max error = " + maxError);

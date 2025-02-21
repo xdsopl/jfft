@@ -15,8 +15,8 @@ public class FastFourierTransform {
 		tf = new Complex[length];
 		for (int i = 0; i < length; ++i) {
 			double x = - (2.0 * Math.PI * i) / length;
-			float a = (float)Math.cos(x);
-			float b = (float)Math.sin(x);
+			double a = Math.cos(x);
+			double b = Math.sin(x);
 			tf[i] = new Complex(a, b);
 		}
 		tmp0 = new Complex();

@@ -5,14 +5,14 @@ Copyright 2024 Ahmet Inan <xdsopl@gmail.com>
 */
 
 public class Complex {
-	public float real, imag;
+	public double real, imag;
 
 	Complex() {
 		real = 0;
 		imag = 0;
 	}
 
-	Complex(float real, float imag) {
+	Complex(double real, double imag) {
 		this.real = real;
 		this.imag = imag;
 	}
@@ -28,31 +28,31 @@ public class Complex {
 		return this;
 	}
 
-	Complex set(float real, float imag) {
+	Complex set(double real, double imag) {
 		this.real = real;
 		this.imag = imag;
 		return this;
 	}
 
-	Complex set(float real) {
+	Complex set(double real) {
 		return set(real, 0);
 	}
 
-	float norm() {
+	double norm() {
 		return real * real + imag * imag;
 	}
 
-	float abs() {
-		return (float) Math.sqrt(norm());
+	double abs() {
+		return Math.sqrt(norm());
 	}
 
-	float arg() {
-		return (float) Math.atan2(imag, real);
+	double arg() {
+		return Math.atan2(imag, real);
 	}
 
-	Complex polar(float a, float b) {
-		real = a * (float) Math.cos(b);
-		imag = a * (float) Math.sin(b);
+	Complex polar(double a, double b) {
+		real = a * Math.cos(b);
+		imag = a * Math.sin(b);
 		return this;
 	}
 
@@ -73,28 +73,28 @@ public class Complex {
 		return this;
 	}
 
-	Complex mul(float value) {
+	Complex mul(double value) {
 		real *= value;
 		imag *= value;
 		return this;
 	}
 
 	Complex mul(Complex other) {
-		float tmp = real * other.real - imag * other.imag;
+		double tmp = real * other.real - imag * other.imag;
 		imag = real * other.imag + imag * other.real;
 		real = tmp;
 		return this;
 	}
 
-	Complex div(float value) {
+	Complex div(double value) {
 		real /= value;
 		imag /= value;
 		return this;
 	}
 
 	Complex div(Complex other) {
-		float den = other.norm();
-		float tmp = (real * other.real + imag * other.imag) / den;
+		double den = other.norm();
+		double tmp = (real * other.real + imag * other.imag) / den;
 		imag = (imag * other.real - real * other.imag) / den;
 		real = tmp;
 		return this;
