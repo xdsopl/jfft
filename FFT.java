@@ -49,10 +49,18 @@ public class FFT {
 	}
 
 	void forward(Complex[] out, Complex[] in) {
+		if (in.length != tf.length)
+			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to FFT length (" + tf.length + ")");
+		if (out.length != tf.length)
+			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to FFT length (" + tf.length + ")");
 		radix2(out, in, 0, 0, tf.length, 1, true);
 	}
 
 	void backward(Complex[] out, Complex[] in) {
+		if (in.length != tf.length)
+			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to FFT length (" + tf.length + ")");
+		if (out.length != tf.length)
+			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to FFT length (" + tf.length + ")");
 		radix2(out, in, 0, 0, tf.length, 1, false);
 	}
 }
