@@ -25,8 +25,9 @@ public class TestBench {
 			buf2[i] = new Complex();
 		fft.forward(buf1, buf0);
 		fft.backward(buf2, buf1);
+		double factor = 1.0 / length;
 		for (int i = 0; i < length; ++i)
-			buf2[i].div(length);
+			buf2[i].mul(factor);
 		double maxError = 0;
 		for (int i = 0; i < length; ++i)
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
@@ -35,20 +36,20 @@ public class TestBench {
 		for (int j = 0; j < iterations; ++j) {
 			fft.backward(buf2, buf1);
 			for (int i = 0; i < length; ++i)
-				buf2[i].div(length);
+				buf2[i].mul(factor);
 			fft.forward(buf1, buf2);
 		}
 		long before = System.nanoTime();
 		for (int j = 0; j < iterations; ++j) {
 			fft.backward(buf2, buf1);
 			for (int i = 0; i < length; ++i)
-				buf2[i].div(length);
+				buf2[i].mul(factor);
 			fft.forward(buf1, buf2);
 		}
 		long after = System.nanoTime();
 		fft.backward(buf2, buf1);
 		for (int i = 0; i < length; ++i)
-			buf2[i].div(length);
+			buf2[i].mul(factor);
 		for (int i = 0; i < length; ++i)
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
 		System.out.println("max error after " + 2 * iterations + " iterations = " + maxError);
