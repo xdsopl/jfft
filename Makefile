@@ -1,8 +1,8 @@
 JAVAC = javac
 JAVA  = java
 
-JAVA_FILES = TestBench.java Complex.java
-CLASS_FILES = TestBench.class Complex.class
+JAVA_FILES = TestBench.java Complex.java FFT.java
+CLASS_FILES = TestBench.class Complex.class FFT.class
 
 test: TestBench.class
 	$(JAVA) TestBench
