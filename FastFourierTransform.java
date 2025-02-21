@@ -4,13 +4,13 @@ Fast Fourier Transform
 Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 */
 
-public class FFT {
+public class FastFourierTransform {
 	private Complex[] tf;
 	private Complex tmp0, tmp1;
 
-	FFT(int length) {
+	FastFourierTransform(int length) {
 		if (length < 2 || !isPowerOfTwo(length))
-			throw new IllegalArgumentException("FFT length must be a power of 2 and at least 2, but was: " + length);
+			throw new IllegalArgumentException("Transform length must be a power of 2 and at least 2, but was: " + length);
 		tf = new Complex[length];
 		for (int i = 0; i < length; ++i) {
 			double x = - (2.0 * Math.PI * i) / length;
@@ -50,17 +50,17 @@ public class FFT {
 
 	void forward(Complex[] out, Complex[] in) {
 		if (in.length != tf.length)
-			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to FFT length (" + tf.length + ")");
+			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to Transform length (" + tf.length + ")");
 		if (out.length != tf.length)
-			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to FFT length (" + tf.length + ")");
+			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to Transform length (" + tf.length + ")");
 		radix2(out, in, 0, 0, tf.length, 1, true);
 	}
 
 	void backward(Complex[] out, Complex[] in) {
 		if (in.length != tf.length)
-			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to FFT length (" + tf.length + ")");
+			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to Transform length (" + tf.length + ")");
 		if (out.length != tf.length)
-			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to FFT length (" + tf.length + ")");
+			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to Transform length (" + tf.length + ")");
 		radix2(out, in, 0, 0, tf.length, 1, false);
 	}
 }
