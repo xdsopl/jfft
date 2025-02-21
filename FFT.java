@@ -27,20 +27,24 @@ public class FFT {
 	}
 
 	private void dft2(Complex out0, Complex out1, Complex in0, Complex in1) {
-		tmp0.set(in0);
-		tmp1.set(in1);
-		out0.set(tmp0).add(tmp1);
-		out1.set(tmp0).sub(tmp1);
+		out0.set(in0).add(in1);
+		out1.set(in0).sub(in1);
 	}
 
-	private void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean D) {
+	private void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
 		if (N == 2) {
 			dft2(out[O], out[O + 1], in[I], in[I + S]);
 		} else {
-			radix2(out, in, O, I, N / 2, 2 * S, D);
-			radix2(out, in, O + N / 2, I + S, N / 2, 2 * S, D);
-			for (int k0 = 0, k1 = N / 2; k0 < N / 2; ++k0, ++k1)
-				dft2(out[O + k0], out[O + k1], out[O + k0], out[O + k1].mul(D ? tf[k0 * S] : tmp1.set(tf[k0 * S]).conj()));
+			radix2(out, in, O, I, N / 2, 2 * S, F);
+			radix2(out, in, O + N / 2, I + S, N / 2, 2 * S, F);
+			for (int k0 = 0, k1 = N / 2; k0 < N / 2; ++k0, ++k1) {
+				tmp0.set(out[O + k0]);
+				tmp1.set(tf[k0 * S]);
+				if (!F)
+					tmp1.conj();
+				tmp1.mul(out[O + k1]);
+				dft2(out[O + k0], out[O + k1], tmp0, tmp1);
+			}
 		}
 	}
 
