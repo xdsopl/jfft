@@ -33,12 +33,12 @@ public class FastFourierTransform {
 		return n > 0 && (n & (n - 1)) == 0;
 	}
 
-	private void dft2(Complex out0, Complex out1, Complex in0, Complex in1) {
+	private void fwd2(Complex out0, Complex out1, Complex in0, Complex in1) {
 		out0.set(in0).add(in1);
 		out1.set(in0).sub(in1);
 	}
 
-	private void dft4(Complex out0, Complex out1, Complex out2, Complex out3, Complex in0, Complex in1, Complex in2, Complex in3) {
+	private void fwd4(Complex out0, Complex out1, Complex out2, Complex out3, Complex in0, Complex in1, Complex in2, Complex in3) {
 		tmp0.set(in0).add(in2);
 		tmp1.set(in0).sub(in2);
 		tmp2.set(in1).add(in3);
@@ -51,12 +51,12 @@ public class FastFourierTransform {
 
 	private void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
 		if (N == 2) {
-			dft2(out[O], out[O + 1], in[I], in[I + S]);
+			fwd2(out[O], out[O + 1], in[I], in[I + S]);
 		} else if (N == 4) {
 			if (F)
-				dft4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+				fwd4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 			else
-				dft4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+				fwd4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 		} else {
 			int Q = N / 2;
 			radix2(out, in, O, I, Q, 2 * S, F);
@@ -67,7 +67,7 @@ public class FastFourierTransform {
 				if (!F)
 					tin1.conj();
 				tin1.mul(out[k1]);
-				dft2(out[k0], out[k1], tin0, tin1);
+				fwd2(out[k0], out[k1], tin0, tin1);
 			}
 		}
 	}
@@ -75,9 +75,9 @@ public class FastFourierTransform {
 	private void radix4(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
 		if (N == 4) {
 			if (F)
-				dft4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+				fwd4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 			else
-				dft4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+				fwd4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 		} else {
 			int Q = N / 4;
 			radix4(out, in, O, I, Q, 4 * S, F);
@@ -99,9 +99,9 @@ public class FastFourierTransform {
 					tin3.conj();
 				tin3.mul(out[k3]);
 				if (F)
-					dft4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
+					fwd4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
 				else
-					dft4(out[k0], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3);
+					fwd4(out[k0], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3);
 			}
 		}
 	}
