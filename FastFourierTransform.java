@@ -7,6 +7,7 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 public class FastFourierTransform {
 	private Complex[] tf;
 	private Complex tmp0, tmp1, tmp2, tmp3;
+	private Complex tin0, tin1, tin2, tin3;
 
 	FastFourierTransform(int length) {
 		if (length < 2 || !isPowerOfTwo(length))
@@ -22,6 +23,10 @@ public class FastFourierTransform {
 		tmp1 = new Complex();
 		tmp2 = new Complex();
 		tmp3 = new Complex();
+		tin0 = new Complex();
+		tin1 = new Complex();
+		tin2 = new Complex();
+		tin3 = new Complex();
 	}
 
 	private boolean isPowerOfTwo(int n) {
@@ -53,15 +58,50 @@ public class FastFourierTransform {
 			else
 				dft4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 		} else {
-			radix2(out, in, O, I, N / 2, 2 * S, F);
-			radix2(out, in, O + N / 2, I + S, N / 2, 2 * S, F);
-			for (int k0 = 0, k1 = N / 2; k0 < N / 2; ++k0, ++k1) {
-				tmp0.set(out[O + k0]);
-				tmp1.set(tf[k0 * S]);
+			int Q = N / 2;
+			radix2(out, in, O, I, Q, 2 * S, F);
+			radix2(out, in, O + Q, I + S, Q, 2 * S, F);
+			for (int k0 = O, k1 = O + Q, l1 = 0; k0 < O + Q; ++k0, ++k1, l1 += S) {
+				tin0.set(out[k0]);
+				tin1.set(tf[l1]);
 				if (!F)
-					tmp1.conj();
-				tmp1.mul(out[O + k1]);
-				dft2(out[O + k0], out[O + k1], tmp0, tmp1);
+					tin1.conj();
+				tin1.mul(out[k1]);
+				dft2(out[k0], out[k1], tin0, tin1);
+			}
+		}
+	}
+
+	private void radix4(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
+		if (N == 4) {
+			if (F)
+				dft4(out[O], out[O + 1], out[O + 2], out[O + 3], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+			else
+				dft4(out[O], out[O + 3], out[O + 2], out[O + 1], in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+		} else {
+			int Q = N / 4;
+			radix4(out, in, O, I, Q, 4 * S, F);
+			radix4(out, in, O + Q, I + S, Q, 4 * S, F);
+			radix4(out, in, O + 2 * Q , I + 2 * S, Q, 4 * S, F);
+			radix4(out, in, O + 3 * Q, I + 3 * S, Q, 4 * S, F);
+			for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, l1 = 0, l2 = 0, l3 = 0; k0 < O + Q; ++k0, ++k1, ++k2, ++k3, l1 += S, l2 += 2 * S, l3 += 3 * S) {
+				tin0.set(out[k0]);
+				tin1.set(tf[l1]);
+				if (!F)
+					tin1.conj();
+				tin1.mul(out[k1]);
+				tin2.set(tf[l2]);
+				if (!F)
+					tin2.conj();
+				tin2.mul(out[k2]);
+				tin3.set(tf[l3]);
+				if (!F)
+					tin3.conj();
+				tin3.mul(out[k3]);
+				if (F)
+					dft4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
+				else
+					dft4(out[k0], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3);
 			}
 		}
 	}
@@ -71,7 +111,7 @@ public class FastFourierTransform {
 			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to Transform length (" + tf.length + ")");
 		if (out.length != tf.length)
 			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to Transform length (" + tf.length + ")");
-		radix2(out, in, 0, 0, tf.length, 1, true);
+		radix4(out, in, 0, 0, tf.length, 1, true);
 	}
 
 	void backward(Complex[] out, Complex[] in) {
@@ -79,6 +119,6 @@ public class FastFourierTransform {
 			throw new IllegalArgumentException("Input array length (" + in.length + ") must be equal to Transform length (" + tf.length + ")");
 		if (out.length != tf.length)
 			throw new IllegalArgumentException("Output array length (" + out.length + ") must be equal to Transform length (" + tf.length + ")");
-		radix2(out, in, 0, 0, tf.length, 1, false);
+		radix4(out, in, 0, 0, tf.length, 1, false);
 	}
 }
