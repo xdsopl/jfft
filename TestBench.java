@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class TestBench {
 	public static void main(String[] args) {
-		int length = 8;
+		int length = 256;
 		FastFourierTransform fft = new FastFourierTransform(length);
 		Random random = new Random();
 		Complex[] buf0 = new Complex[length];
@@ -23,21 +23,13 @@ public class TestBench {
 			buf1[i] = new Complex();
 		for (int i = 0; i < length; ++i)
 			buf2[i] = new Complex();
-		System.out.println("Testing forward transform");
 		fft.forward(buf1, buf0);
-		for (int i = 0; i < length; ++i)
-			System.out.println("buf0[" + i + "] = " + buf0[i]);
-		for (int i = 0; i < length; ++i)
-			System.out.println("buf1[" + i + "] = " + buf1[i]);
-		System.out.println("Testing backward transform");
 		fft.backward(buf2, buf1);
 		for (int i = 0; i < length; ++i)
-			System.out.println("buf1[" + i + "] = " + buf1[i]);
-		for (int i = 0; i < length; ++i)
 			buf2[i].div(length);
+		float maxError = 0;
 		for (int i = 0; i < length; ++i)
-			System.out.println("buf2[" + i + "] = " + buf2[i]);
-		for (int i = 0; i < length; ++i)
-			System.out.println("abs(buf2[" + i + "] - buf0[" + i + "]) = " + buf2[i].sub(buf0[i]).abs());
+			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
+		System.out.println("max error = " + maxError);
 	}
 }
