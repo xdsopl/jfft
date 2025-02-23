@@ -7,7 +7,7 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 public class FreqSweep {
 	public static void main(String[] args) {
 		int length = 256;
-		ShortTimeFourierTransform stft = new ShortTimeFourierTransform(length);
+		ShortTimeFourierTransform stft = new ShortTimeFourierTransform(length, 3);
 		Complex input = new Complex();
 		int factor = 10000, range = length * factor;
 		for (int acc = 0, freq = -10 * factor; freq <= 10 * factor; acc = (acc + ++freq) % range)
