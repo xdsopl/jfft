@@ -2,8 +2,8 @@ JAVAC = javac
 JAVA  = java
 GNUPLOT = gnuplot
 
-JAVA_FILES = TestBench.java Complex.java FastFourierTransform.java ShortTimeFourierTransform.java FreqSweep.java
-CLASS_FILES = TestBench.class Complex.class FastFourierTransform.class ShortTimeFourierTransform.class FreqSweep.class
+JAVA_FILES = TestBench.java Complex.java FastFourierTransform.java ShortTimeFourierTransform.java FreqSweep.java Hann.java
+CLASS_FILES = TestBench.class Complex.class FastFourierTransform.class ShortTimeFourierTransform.class FreqSweep.class Hann.class
 
 test: TestBench.class
 	$(JAVA) TestBench
