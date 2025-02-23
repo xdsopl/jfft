@@ -23,7 +23,7 @@ public class ShortTimeFourierTransform {
 		power = new double[length];
 		weight = new double[length];
 		for (int i = 0; i < length; ++i)
-			weight[i] = Hann.window(i, length) * 2.0 / length;
+			weight[i] = Filter.lowPass(2, length, i, length) * Hann.window(i, length);
 	}
 
 	boolean push(Complex input) {
