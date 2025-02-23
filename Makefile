@@ -6,7 +6,7 @@ test: TestBench.class
 	$(JAVA) TestBench
 
 sweep: FreqSweep.class
-	$(GNUPLOT) FreqSweep.gp
+	$(GNUPLOT) sweep.gp
 
 TestBench.class: TestBench.java Complex.java FastFourierTransform.java
 	$(JAVAC) TestBench.java
