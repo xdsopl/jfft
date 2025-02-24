@@ -10,9 +10,19 @@ public class FastFourierTransform {
 	private final Complex tin0, tin1, tin2, tin3;
 
 	FastFourierTransform(int length) {
-		if (length < 2 || !isPowerOfTwo(length))
+		int rest = length;
+		while (rest > 1) {
+			if (rest % 2 == 0)
+				rest /= 2;
+			else if (rest % 3 == 0)
+				rest /= 3;
+			else
+				break;
+		}
+		if (length < 2 || rest != 1)
 			throw new IllegalArgumentException(
-				"Transform length must be a power of 2 and at least 2, but was: " + length);
+				"Transform length must be a composite of 2 and 3 and at least 2, but was: "
+				+ length);
 		tf = new Complex[length];
 		for (int i = 0; i < length; ++i) {
 			double x = -(2.0 * Math.PI * i) / length;
@@ -57,8 +67,41 @@ public class FastFourierTransform {
 		}
 	}
 
+	private void fwd3(Complex out0, Complex out1, Complex out2, Complex in0, Complex in1, Complex in2) {
+		tmp0.set(in1).add(in2);
+		tmp1.set(in1.imag - in2.imag, in2.real - in1.real);
+		tmp2.set(tmp0).mul(-0.5);
+		tmp3.set(tmp1).mul(0.5 * Math.sqrt(3.0));
+		out0.set(in0).add(tmp0);
+		out1.set(in0).add(tmp2).add(tmp3);
+		out2.set(in0).add(tmp2).sub(tmp3);
+	}
+
+	private void radix3(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
+		int Q = N / 3;
+		dit(out, in, O, I, Q, 3 * S, F);
+		dit(out, in, O + Q, I + S, Q, 3 * S, F);
+		dit(out, in, O + 2 * Q, I + 2 * S, Q, 3 * S, F);
+		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, l1 = 0, l2 = 0;
+				k0 < O + Q; ++k0, ++k1, ++k2, l1 += S, l2 += 2 * S) {
+			tin0.set(out[k0]);
+			tin1.set(tf[l1]);
+			if (!F)
+				tin1.conj();
+			tin1.mul(out[k1]);
+			tin2.set(tf[l2]);
+			if (!F)
+				tin2.conj();
+			tin2.mul(out[k2]);
+			if (F)
+				fwd3(out[k0], out[k1], out[k2], tin0, tin1, tin2);
+			else
+				fwd3(out[k0], out[k2], out[k1], tin0, tin1, tin2);
+		}
+	}
+
 	private void fwd4(Complex out0, Complex out1, Complex out2, Complex out3,
-		Complex in0, Complex in1, Complex in2, Complex in3) {
+			Complex in0, Complex in1, Complex in2, Complex in3) {
 		tmp0.set(in0).add(in2);
 		tmp1.set(in0).sub(in2);
 		tmp2.set(in1).add(in3);
@@ -100,6 +143,13 @@ public class FastFourierTransform {
 	private void dit(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
 		if (N == 2) {
 			dft2(out[O], out[O + 1], in[I], in[I + S]);
+		} else if (N == 3) {
+			if (F)
+				fwd3(out[O], out[O + 1], out[O + 2],
+					in[I], in[I + S], in[I + 2 * S]);
+			else
+				fwd3(out[O], out[O + 2], out[O + 1],
+					in[I], in[I + S], in[I + 2 * S]);
 		} else if (N == 4) {
 			if (F)
 				fwd4(out[O], out[O + 1], out[O + 2], out[O + 3],
@@ -107,6 +157,8 @@ public class FastFourierTransform {
 			else
 				fwd4(out[O], out[O + 3], out[O + 2], out[O + 1],
 					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+		} else if (N % 3 == 0) {
+			radix3(out, in, O, I, N, S, F);
 		} else if (isPowerOfFour(N)) {
 			radix4(out, in, O, I, N, S, F);
 		} else {

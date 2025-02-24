@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class TestBench {
 	public static void main(String[] args) {
-		int length = 256;
+		int length = 216;
 		FastFourierTransform fft = new FastFourierTransform(length);
 		Random random = new Random();
 		Complex[] buf0 = new Complex[length];
