@@ -5,9 +5,9 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 */
 
 public class FastFourierTransform {
-	private Complex[] tf;
-	private Complex tmp0, tmp1, tmp2, tmp3;
-	private Complex tin0, tin1, tin2, tin3;
+	private final Complex[] tf;
+	private final Complex tmp0, tmp1, tmp2, tmp3;
+	private final Complex tin0, tin1, tin2, tin3;
 
 	FastFourierTransform(int length) {
 		if (length < 2 || !isPowerOfTwo(length))

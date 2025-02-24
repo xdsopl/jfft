@@ -5,13 +5,13 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 */
 
 public class ShortTimeFourierTransform {
-	private FastFourierTransform fft;
-	private Complex[] prev, fold, freq;
-	private double[] weight;
-	private Complex temp;
+	private final FastFourierTransform fft;
+	private final Complex[] prev, fold, freq;
+	private final double[] weight;
+	private final Complex temp;
 	private int index;
 
-	public double[] power;
+	public final double[] power;
 
 	ShortTimeFourierTransform(int length, int overlap) {
 		fft = new FastFourierTransform(length);
