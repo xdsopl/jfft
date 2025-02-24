@@ -86,8 +86,8 @@ public class FastFourierTransform {
 	private void fwd3(Complex out0, Complex out1, Complex out2, Complex in0, Complex in1, Complex in2) {
 		tmp0.set(in1).add(in2);
 		tmp1.set(in1.imag - in2.imag, in2.real - in1.real);
-		tmp2.set(tmp0).mul(-0.5);
-		tmp3.set(tmp1).mul(0.5 * Math.sqrt(3.0));
+		tmp2.set(tmp0).mul(cos(1, 3));
+		tmp3.set(tmp1).mul(sin(1, 3));
 		out0.set(in0).add(tmp0);
 		out1.set(in0).add(tmp2).add(tmp3);
 		out2.set(in0).add(tmp2).sub(tmp3);
