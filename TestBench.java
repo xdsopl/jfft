@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class TestBench {
 	public static void main(String[] args) {
-		int length = 44100;
+		int length = Integer.parseInt(args[0]);
 		FastFourierTransform fft = new FastFourierTransform(length);
 		Random random = new Random();
 		Complex[] buf0 = new Complex[length];
@@ -32,7 +32,7 @@ public class TestBench {
 		for (int i = 0; i < length; ++i)
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
 		System.out.println("max error = " + maxError);
-		int iterations = 1000;
+		int iterations = (int)(10000000.0 / (length * Math.log(length + 1)));
 		for (int j = 0; j < iterations; ++j) {
 			fft.backward(buf2, buf1);
 			for (int i = 0; i < length; ++i)
