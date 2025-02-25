@@ -82,10 +82,10 @@ public class FastFourierTransform {
 		dit(out, in, O, I, Q, 2 * S, F);
 		dit(out, in, O + Q, I + S, Q, 2 * S, F);
 		for (int k0 = O, k1 = O + Q, l1 = 0; k0 < O + Q; ++k0, ++k1, l1 += S) {
-			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
 			if (!F)
 				tin1.conj();
+			tin0.set(out[k0]);
 			tin1.mul(out[k1]);
 			dft2(out[k0], out[k1], tin0, tin1);
 		}
@@ -108,14 +108,14 @@ public class FastFourierTransform {
 		dit(out, in, O + 2 * Q, I + 2 * S, Q, 3 * S, F);
 		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, l1 = 0, l2 = 0;
 				k0 < O + Q; ++k0, ++k1, ++k2, l1 += S, l2 += 2 * S) {
-			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
-			if (!F)
-				tin1.conj();
-			tin1.mul(out[k1]);
 			tin2.set(tf[l2]);
-			if (!F)
+			if (!F) {
+				tin1.conj();
 				tin2.conj();
+			}
+			tin0.set(out[k0]);
+			tin1.mul(out[k1]);
 			tin2.mul(out[k2]);
 			if (F)
 				fwd3(out[k0], out[k1], out[k2], tin0, tin1, tin2);
@@ -144,18 +144,17 @@ public class FastFourierTransform {
 		dit(out, in, O + 3 * Q, I + 3 * S, Q, 4 * S, F);
 		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, l1 = 0, l2 = 0, l3 = 0;
 				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, l1 += S, l2 += 2 * S, l3 += 3 * S) {
-			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
-			if (!F)
-				tin1.conj();
-			tin1.mul(out[k1]);
 			tin2.set(tf[l2]);
-			if (!F)
-				tin2.conj();
-			tin2.mul(out[k2]);
 			tin3.set(tf[l3]);
-			if (!F)
+			if (!F) {
+				tin1.conj();
+				tin2.conj();
 				tin3.conj();
+			}
+			tin0.set(out[k0]);
+			tin1.mul(out[k1]);
+			tin2.mul(out[k2]);
 			tin3.mul(out[k3]);
 			if (F)
 				fwd4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
@@ -190,22 +189,20 @@ public class FastFourierTransform {
 		dit(out, in, O + 4 * Q, I + 4 * S, Q, 5 * S, F);
 		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0;
 				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S) {
-			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
-			if (!F)
-				tin1.conj();
-			tin1.mul(out[k1]);
 			tin2.set(tf[l2]);
-			if (!F)
-				tin2.conj();
-			tin2.mul(out[k2]);
 			tin3.set(tf[l3]);
-			if (!F)
-				tin3.conj();
-			tin3.mul(out[k3]);
 			tin4.set(tf[l4]);
-			if (!F)
+			if (!F) {
+				tin1.conj();
+				tin2.conj();
+				tin3.conj();
 				tin4.conj();
+			}
+			tin0.set(out[k0]);
+			tin1.mul(out[k1]);
+			tin2.mul(out[k2]);
+			tin3.mul(out[k3]);
 			tin4.mul(out[k4]);
 			if (F)
 				fwd5(out[k0], out[k1], out[k2], out[k3], out[k4], tin0, tin1, tin2, tin3, tin4);
@@ -248,30 +245,26 @@ public class FastFourierTransform {
 		dit(out, in, O + 6 * Q, I + 6 * S, Q, 7 * S, F);
 		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, k5 = O + 5 * Q, k6 = O + 6 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0, l5 = 0, l6 = 0;
 				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, ++k5, ++k6, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S, l5 += 5 * S, l6 += 6 * S) {
-			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
-			if (!F)
-				tin1.conj();
-			tin1.mul(out[k1]);
 			tin2.set(tf[l2]);
-			if (!F)
-				tin2.conj();
-			tin2.mul(out[k2]);
 			tin3.set(tf[l3]);
-			if (!F)
-				tin3.conj();
-			tin3.mul(out[k3]);
 			tin4.set(tf[l4]);
-			if (!F)
-				tin4.conj();
-			tin4.mul(out[k4]);
 			tin5.set(tf[l5]);
-			if (!F)
-				tin5.conj();
-			tin5.mul(out[k5]);
 			tin6.set(tf[l6]);
-			if (!F)
+			if (!F) {
+				tin1.conj();
+				tin2.conj();
+				tin3.conj();
+				tin4.conj();
+				tin5.conj();
 				tin6.conj();
+			}
+			tin0.set(out[k0]);
+			tin1.mul(out[k1]);
+			tin2.mul(out[k2]);
+			tin3.mul(out[k3]);
+			tin4.mul(out[k4]);
+			tin5.mul(out[k5]);
 			tin6.mul(out[k6]);
 			if (F)
 				fwd7(out[k0], out[k1], out[k2], out[k3], out[k4], out[k5], out[k6], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
