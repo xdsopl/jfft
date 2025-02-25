@@ -137,29 +137,38 @@ public class FastFourierTransform {
 	}
 
 	private void radix4(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		int Q = N / 4;
-		dit(out, in, O, I, Q, 4 * S, F);
-		dit(out, in, O + Q, I + S, Q, 4 * S, F);
-		dit(out, in, O + 2 * Q, I + 2 * S, Q, 4 * S, F);
-		dit(out, in, O + 3 * Q, I + 3 * S, Q, 4 * S, F);
-		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, l1 = 0, l2 = 0, l3 = 0;
-				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, l1 += S, l2 += 2 * S, l3 += 3 * S) {
-			tin1.set(tf[l1]);
-			tin2.set(tf[l2]);
-			tin3.set(tf[l3]);
-			if (!F) {
-				tin1.conj();
-				tin2.conj();
-				tin3.conj();
-			}
-			tin0.set(out[k0]);
-			tin1.mul(out[k1]);
-			tin2.mul(out[k2]);
-			tin3.mul(out[k3]);
+		if (N == 4) {
 			if (F)
-				fwd4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
+				fwd4(out[O], out[O + 1], out[O + 2], out[O + 3],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 			else
-				fwd4(out[k0], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3);
+				fwd4(out[O], out[O + 3], out[O + 2], out[O + 1],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
+		} else {
+			int Q = N / 4;
+			radix4(out, in, O, I, Q, 4 * S, F);
+			radix4(out, in, O + Q, I + S, Q, 4 * S, F);
+			radix4(out, in, O + 2 * Q, I + 2 * S, Q, 4 * S, F);
+			radix4(out, in, O + 3 * Q, I + 3 * S, Q, 4 * S, F);
+			for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, l1 = 0, l2 = 0, l3 = 0;
+					k0 < O + Q; ++k0, ++k1, ++k2, ++k3, l1 += S, l2 += 2 * S, l3 += 3 * S) {
+				tin1.set(tf[l1]);
+				tin2.set(tf[l2]);
+				tin3.set(tf[l3]);
+				if (!F) {
+					tin1.conj();
+					tin2.conj();
+					tin3.conj();
+				}
+				tin0.set(out[k0]);
+				tin1.mul(out[k1]);
+				tin2.mul(out[k2]);
+				tin3.mul(out[k3]);
+				if (F)
+					fwd4(out[k0], out[k1], out[k2], out[k3], tin0, tin1, tin2, tin3);
+				else
+					fwd4(out[k0], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3);
+			}
 		}
 	}
 
@@ -285,13 +294,6 @@ public class FastFourierTransform {
 			else
 				fwd3(out[O], out[O + 2], out[O + 1],
 					in[I], in[I + S], in[I + 2 * S]);
-		} else if (N == 4) {
-			if (F)
-				fwd4(out[O], out[O + 1], out[O + 2], out[O + 3],
-					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
-			else
-				fwd4(out[O], out[O + 3], out[O + 2], out[O + 1],
-					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S]);
 		} else if (N == 5) {
 			if (F)
 				fwd5(out[O], out[O + 1], out[O + 2], out[O + 3], out[O + 4],
