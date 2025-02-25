@@ -32,6 +32,8 @@ public class TestBench {
 		for (int i = 0; i < length; ++i)
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
 		System.out.println("max error = " + maxError);
+		if (maxError > 1.0e-14)
+			throw new IllegalStateException("Transform error too high: " + maxError);
 		int iterations = (int)(10000000.0 / (length * Math.log(length + 1)));
 		for (int j = 0; j < iterations; ++j) {
 			fft.backward(buf2, buf1);
