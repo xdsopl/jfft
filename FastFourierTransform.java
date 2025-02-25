@@ -314,7 +314,9 @@ public class FastFourierTransform {
 	}
 
 	private void dit(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		if (isPowerOfFour(N))
+		if (N == 1)
+			out[O].set(in[I]);
+		else if (isPowerOfFour(N))
 			radix4(out, in, O, I, N, S, F);
 		else if (N % 7 == 0)
 			radix7(out, in, O, I, N, S, F);
@@ -324,8 +326,6 @@ public class FastFourierTransform {
 			radix3(out, in, O, I, N, S, F);
 		else if (N % 2 == 0)
 			radix2(out, in, O, I, N, S, F);
-		else if (N == 1)
-			out[O].set(in[I]);
 	}
 
 	void forward(Complex[] out, Complex[] in) {
