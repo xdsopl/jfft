@@ -23,9 +23,9 @@ public class FastFourierTransform {
 			else
 				break;
 		}
-		if (length < 2 || rest != 1)
+		if (rest != 1)
 			throw new IllegalArgumentException(
-				"Transform length must be a composite of 2, 3, 5 and 7 and at least 2, but was: "
+				"Transform length must be a composite of 2, 3, 5 and 7, but was: "
 				+ length);
 		tf = new Complex[length];
 		for (int i = 0; i < length; ++i) {
@@ -274,7 +274,9 @@ public class FastFourierTransform {
 	}
 
 	private void dit(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		if (N == 2) {
+		if (N == 1) {
+			out[O].set(in[I]);
+		} else if (N == 2) {
 			dft2(out[O], out[O + 1], in[I], in[I + S]);
 		} else if (N == 3) {
 			if (F)
