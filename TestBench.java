@@ -54,6 +54,16 @@ public class TestBench {
 			maxError = Math.max(maxError, buf2[i].sub(buf0[i]).abs());
 		System.out.println("max error after " + 2 * iterations + " iterations = " + maxError);
 		long duration = after - before;
-		System.out.println("duration per iteration = " + duration / iterations + " ns");
+		System.out.println("duration per iteration = " + human(duration / iterations));
+	}
+
+	private static String human(long nano) {
+		if (nano < 1000)
+			return nano + " ns";
+		else if (nano < 1000000)
+			return String.format("%.2f µs", nano / 1000.0);
+		else if (nano < 1000000000)
+			return String.format("%.2f ms", nano / 1000000.0);
+		return String.format("%.2f s", nano / 1000000000.0);
 	}
 }
