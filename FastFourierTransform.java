@@ -6,8 +6,8 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 
 public class FastFourierTransform {
 	private final Complex[] tf;
-	private final Complex tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8;
-	private final Complex tin0, tin1, tin2, tin3, tin4;
+	private final Complex tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmpA, tmpB, tmpC;
+	private final Complex tin0, tin1, tin2, tin3, tin4, tin5, tin6;
 
 	FastFourierTransform(int length) {
 		int rest = length;
@@ -18,12 +18,14 @@ public class FastFourierTransform {
 				rest /= 3;
 			else if (rest % 5 == 0)
 				rest /= 5;
+			else if (rest % 7 == 0)
+				rest /= 7;
 			else
 				break;
 		}
 		if (length < 2 || rest != 1)
 			throw new IllegalArgumentException(
-				"Transform length must be a composite of 2, 3 and 5 and at least 2, but was: "
+				"Transform length must be a composite of 2, 3, 5 and 7 and at least 2, but was: "
 				+ length);
 		tf = new Complex[length];
 		for (int i = 0; i < length; ++i) {
@@ -41,11 +43,17 @@ public class FastFourierTransform {
 		tmp6 = new Complex();
 		tmp7 = new Complex();
 		tmp8 = new Complex();
+		tmp9 = new Complex();
+		tmpA = new Complex();
+		tmpB = new Complex();
+		tmpC = new Complex();
 		tin0 = new Complex();
 		tin1 = new Complex();
 		tin2 = new Complex();
 		tin3 = new Complex();
 		tin4 = new Complex();
+		tin5 = new Complex();
+		tin6 = new Complex();
 	}
 
 	private boolean isPowerOfTwo(int n) {
@@ -181,7 +189,7 @@ public class FastFourierTransform {
 		dit(out, in, O + 3 * Q, I + 3 * S, Q, 5 * S, F);
 		dit(out, in, O + 4 * Q, I + 4 * S, Q, 5 * S, F);
 		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0;
-			k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S) {
+				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S) {
 			tin0.set(out[k0]);
 			tin1.set(tf[l1]);
 			if (!F)
@@ -203,6 +211,72 @@ public class FastFourierTransform {
 				fwd5(out[k0], out[k1], out[k2], out[k3], out[k4], tin0, tin1, tin2, tin3, tin4);
 			else
 				fwd5(out[k0], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4);
+		}
+	}
+
+	private void fwd7(Complex out0, Complex out1, Complex out2, Complex out3, Complex out4, Complex out5, Complex out6,
+			Complex in0, Complex in1, Complex in2, Complex in3, Complex in4, Complex in5, Complex in6) {
+		tmp0.set(in1).add(in6);
+		tmp1.set(in2).add(in5);
+		tmp2.set(in3).add(in4);
+		tmp3.set(in1.imag - in6.imag, in6.real - in1.real);
+		tmp4.set(in2.imag - in5.imag, in5.real - in2.real);
+		tmp5.set(in3.imag - in4.imag, in4.real - in3.real);
+		tmp7.set(tmp0).mul(cos(1, 7)).add(tmp6.set(tmp1).mul(cos(2, 7))).add(tmp6.set(tmp2).mul(cos(3, 7)));
+		tmp8.set(tmp3).mul(sin(1, 7)).add(tmp6.set(tmp4).mul(sin(2, 7))).add(tmp6.set(tmp5).mul(sin(3, 7)));
+		tmp9.set(tmp0).mul(cos(2, 7)).add(tmp6.set(tmp1).mul(cos(3, 7))).add(tmp6.set(tmp2).mul(cos(1, 7)));
+		tmpA.set(tmp3).mul(sin(2, 7)).sub(tmp6.set(tmp4).mul(sin(3, 7))).sub(tmp6.set(tmp5).mul(sin(1, 7)));
+		tmpB.set(tmp0).mul(cos(3, 7)).add(tmp6.set(tmp1).mul(cos(1, 7))).add(tmp6.set(tmp2).mul(cos(2, 7)));
+		tmpC.set(tmp3).mul(sin(3, 7)).sub(tmp6.set(tmp4).mul(sin(1, 7))).add(tmp6.set(tmp5).mul(sin(2, 7)));
+		out0.set(in0).add(tmp0).add(tmp1).add(tmp2);
+		out1.set(in0).add(tmp7).add(tmp8);
+		out2.set(in0).add(tmp9).add(tmpA);
+		out3.set(in0).add(tmpB).add(tmpC);
+		out4.set(in0).add(tmpB).sub(tmpC);
+		out5.set(in0).add(tmp9).sub(tmpA);
+		out6.set(in0).add(tmp7).sub(tmp8);
+	}
+
+	private void radix7(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
+		int Q = N / 7;
+		dit(out, in, O, I, Q, 7 * S, F);
+		dit(out, in, O + Q, I + S, Q, 7 * S, F);
+		dit(out, in, O + 2 * Q, I + 2 * S, Q, 7 * S, F);
+		dit(out, in, O + 3 * Q, I + 3 * S, Q, 7 * S, F);
+		dit(out, in, O + 4 * Q, I + 4 * S, Q, 7 * S, F);
+		dit(out, in, O + 5 * Q, I + 5 * S, Q, 7 * S, F);
+		dit(out, in, O + 6 * Q, I + 6 * S, Q, 7 * S, F);
+		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, k5 = O + 5 * Q, k6 = O + 6 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0, l5 = 0, l6 = 0;
+				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, ++k5, ++k6, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S, l5 += 5 * S, l6 += 6 * S) {
+			tin0.set(out[k0]);
+			tin1.set(tf[l1]);
+			if (!F)
+				tin1.conj();
+			tin1.mul(out[k1]);
+			tin2.set(tf[l2]);
+			if (!F)
+				tin2.conj();
+			tin2.mul(out[k2]);
+			tin3.set(tf[l3]);
+			if (!F)
+				tin3.conj();
+			tin3.mul(out[k3]);
+			tin4.set(tf[l4]);
+			if (!F)
+				tin4.conj();
+			tin4.mul(out[k4]);
+			tin5.set(tf[l5]);
+			if (!F)
+				tin5.conj();
+			tin5.mul(out[k5]);
+			tin6.set(tf[l6]);
+			if (!F)
+				tin6.conj();
+			tin6.mul(out[k6]);
+			if (F)
+				fwd7(out[k0], out[k1], out[k2], out[k3], out[k4], out[k5], out[k6], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
+			else
+				fwd7(out[k0], out[k6], out[k5], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
 		}
 	}
 
@@ -230,6 +304,15 @@ public class FastFourierTransform {
 			else
 				fwd5(out[O], out[O + 4], out[O + 3], out[O + 2], out[O + 1],
 					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S]);
+		} else if (N == 7) {
+			if (F)
+				fwd7(out[O], out[O + 1], out[O + 2], out[O + 3], out[O + 4], out[O + 5], out[O + 6],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S], in[I + 5 * S], in[I + 6 * S]);
+			else
+				fwd7(out[O], out[O + 6], out[O + 5], out[O + 4], out[O + 3], out[O + 2], out[O + 1],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S], in[I + 5 * S], in[I + 6 * S]);
+		} else if (N % 7 == 0) {
+			radix7(out, in, O, I, N, S, F);
 		} else if (N % 5 == 0) {
 			radix5(out, in, O, I, N, S, F);
 		} else if (N % 3 == 0) {
