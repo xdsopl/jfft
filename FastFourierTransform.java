@@ -6,7 +6,7 @@ Copyright 2025 Ahmet Inan <xdsopl@gmail.com>
 
 public class FastFourierTransform {
 	private final Complex[] tf;
-	private final Complex tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp8, tmp9, tmpA, tmpB, tmpC;
+	private final Complex tmpA, tmpB, tmpC, tmpD, tmpE, tmpF, tmpG, tmpH, tmpI, tmpJ, tmpK, tmpL, tmpM;
 	private final Complex tin0, tin1, tin2, tin3, tin4, tin5, tin6;
 
 	FastFourierTransform(int length) {
@@ -34,19 +34,19 @@ public class FastFourierTransform {
 			double b = Math.sin(x);
 			tf[i] = new Complex(a, b);
 		}
-		tmp0 = new Complex();
-		tmp1 = new Complex();
-		tmp2 = new Complex();
-		tmp3 = new Complex();
-		tmp4 = new Complex();
-		tmp5 = new Complex();
-		tmp6 = new Complex();
-		tmp7 = new Complex();
-		tmp8 = new Complex();
-		tmp9 = new Complex();
 		tmpA = new Complex();
 		tmpB = new Complex();
 		tmpC = new Complex();
+		tmpD = new Complex();
+		tmpE = new Complex();
+		tmpF = new Complex();
+		tmpG = new Complex();
+		tmpH = new Complex();
+		tmpI = new Complex();
+		tmpJ = new Complex();
+		tmpK = new Complex();
+		tmpL = new Complex();
+		tmpM = new Complex();
 		tin0 = new Complex();
 		tin1 = new Complex();
 		tin2 = new Complex();
@@ -92,13 +92,13 @@ public class FastFourierTransform {
 	}
 
 	private void fwd3(Complex out0, Complex out1, Complex out2, Complex in0, Complex in1, Complex in2) {
-		tmp0.set(in1).add(in2);
-		tmp1.set(in1.imag - in2.imag, in2.real - in1.real);
-		tmp2.set(tmp0).mul(cos(1, 3));
-		tmp3.set(tmp1).mul(sin(1, 3));
-		out0.set(in0).add(tmp0);
-		out1.set(in0).add(tmp2).add(tmp3);
-		out2.set(in0).add(tmp2).sub(tmp3);
+		tmpA.set(in1).add(in2);
+		tmpB.set(in1.imag - in2.imag, in2.real - in1.real);
+		tmpC.set(tmpA).mul(cos(1, 3));
+		tmpD.set(tmpB).mul(sin(1, 3));
+		out0.set(in0).add(tmpA);
+		out1.set(in0).add(tmpC).add(tmpD);
+		out2.set(in0).add(tmpC).sub(tmpD);
 	}
 
 	private void radix3(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
@@ -126,14 +126,14 @@ public class FastFourierTransform {
 
 	private void fwd4(Complex out0, Complex out1, Complex out2, Complex out3,
 			Complex in0, Complex in1, Complex in2, Complex in3) {
-		tmp0.set(in0).add(in2);
-		tmp1.set(in0).sub(in2);
-		tmp2.set(in1).add(in3);
-		tmp3.set(in1.imag - in3.imag, in3.real - in1.real);
-		out0.set(tmp0).add(tmp2);
-		out1.set(tmp1).add(tmp3);
-		out2.set(tmp0).sub(tmp2);
-		out3.set(tmp1).sub(tmp3);
+		tmpA.set(in0).add(in2);
+		tmpB.set(in0).sub(in2);
+		tmpC.set(in1).add(in3);
+		tmpD.set(in1.imag - in3.imag, in3.real - in1.real);
+		out0.set(tmpA).add(tmpC);
+		out1.set(tmpB).add(tmpD);
+		out2.set(tmpA).sub(tmpC);
+		out3.set(tmpB).sub(tmpD);
 	}
 
 	private void radix4(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
@@ -166,19 +166,19 @@ public class FastFourierTransform {
 
 	private void fwd5(Complex out0, Complex out1, Complex out2, Complex out3, Complex out4,
 			Complex in0, Complex in1, Complex in2, Complex in3, Complex in4) {
-		tmp0.set(in1).add(in4);
-		tmp1.set(in2).add(in3);
-		tmp2.set(in1.imag - in4.imag, in4.real - in1.real);
-		tmp3.set(in2.imag - in3.imag, in3.real - in2.real);
-		tmp5.set(tmp0).mul(cos(1, 5)).add(tmp4.set(tmp1).mul(cos(2, 5)));
-		tmp6.set(tmp2).mul(sin(1, 5)).add(tmp4.set(tmp3).mul(sin(2, 5)));
-		tmp7.set(tmp0).mul(cos(2, 5)).add(tmp4.set(tmp1).mul(cos(1, 5)));
-		tmp8.set(tmp2).mul(sin(2, 5)).sub(tmp4.set(tmp3).mul(sin(1, 5)));
-		out0.set(in0).add(tmp0).add(tmp1);
-		out1.set(in0).add(tmp5).add(tmp6);
-		out2.set(in0).add(tmp7).add(tmp8);
-		out3.set(in0).add(tmp7).sub(tmp8);
-		out4.set(in0).add(tmp5).sub(tmp6);
+		tmpA.set(in1).add(in4);
+		tmpB.set(in2).add(in3);
+		tmpC.set(in1.imag - in4.imag, in4.real - in1.real);
+		tmpD.set(in2.imag - in3.imag, in3.real - in2.real);
+		tmpF.set(tmpA).mul(cos(1, 5)).add(tmpE.set(tmpB).mul(cos(2, 5)));
+		tmpG.set(tmpC).mul(sin(1, 5)).add(tmpE.set(tmpD).mul(sin(2, 5)));
+		tmpH.set(tmpA).mul(cos(2, 5)).add(tmpE.set(tmpB).mul(cos(1, 5)));
+		tmpI.set(tmpC).mul(sin(2, 5)).sub(tmpE.set(tmpD).mul(sin(1, 5)));
+		out0.set(in0).add(tmpA).add(tmpB);
+		out1.set(in0).add(tmpF).add(tmpG);
+		out2.set(in0).add(tmpH).add(tmpI);
+		out3.set(in0).add(tmpH).sub(tmpI);
+		out4.set(in0).add(tmpF).sub(tmpG);
 	}
 
 	private void radix5(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
@@ -216,25 +216,25 @@ public class FastFourierTransform {
 
 	private void fwd7(Complex out0, Complex out1, Complex out2, Complex out3, Complex out4, Complex out5, Complex out6,
 			Complex in0, Complex in1, Complex in2, Complex in3, Complex in4, Complex in5, Complex in6) {
-		tmp0.set(in1).add(in6);
-		tmp1.set(in2).add(in5);
-		tmp2.set(in3).add(in4);
-		tmp3.set(in1.imag - in6.imag, in6.real - in1.real);
-		tmp4.set(in2.imag - in5.imag, in5.real - in2.real);
-		tmp5.set(in3.imag - in4.imag, in4.real - in3.real);
-		tmp7.set(tmp0).mul(cos(1, 7)).add(tmp6.set(tmp1).mul(cos(2, 7))).add(tmp6.set(tmp2).mul(cos(3, 7)));
-		tmp8.set(tmp3).mul(sin(1, 7)).add(tmp6.set(tmp4).mul(sin(2, 7))).add(tmp6.set(tmp5).mul(sin(3, 7)));
-		tmp9.set(tmp0).mul(cos(2, 7)).add(tmp6.set(tmp1).mul(cos(3, 7))).add(tmp6.set(tmp2).mul(cos(1, 7)));
-		tmpA.set(tmp3).mul(sin(2, 7)).sub(tmp6.set(tmp4).mul(sin(3, 7))).sub(tmp6.set(tmp5).mul(sin(1, 7)));
-		tmpB.set(tmp0).mul(cos(3, 7)).add(tmp6.set(tmp1).mul(cos(1, 7))).add(tmp6.set(tmp2).mul(cos(2, 7)));
-		tmpC.set(tmp3).mul(sin(3, 7)).sub(tmp6.set(tmp4).mul(sin(1, 7))).add(tmp6.set(tmp5).mul(sin(2, 7)));
-		out0.set(in0).add(tmp0).add(tmp1).add(tmp2);
-		out1.set(in0).add(tmp7).add(tmp8);
-		out2.set(in0).add(tmp9).add(tmpA);
-		out3.set(in0).add(tmpB).add(tmpC);
-		out4.set(in0).add(tmpB).sub(tmpC);
-		out5.set(in0).add(tmp9).sub(tmpA);
-		out6.set(in0).add(tmp7).sub(tmp8);
+		tmpA.set(in1).add(in6);
+		tmpB.set(in2).add(in5);
+		tmpC.set(in3).add(in4);
+		tmpD.set(in1.imag - in6.imag, in6.real - in1.real);
+		tmpE.set(in2.imag - in5.imag, in5.real - in2.real);
+		tmpF.set(in3.imag - in4.imag, in4.real - in3.real);
+		tmpH.set(tmpA).mul(cos(1, 7)).add(tmpG.set(tmpB).mul(cos(2, 7))).add(tmpG.set(tmpC).mul(cos(3, 7)));
+		tmpI.set(tmpD).mul(sin(1, 7)).add(tmpG.set(tmpE).mul(sin(2, 7))).add(tmpG.set(tmpF).mul(sin(3, 7)));
+		tmpJ.set(tmpA).mul(cos(2, 7)).add(tmpG.set(tmpB).mul(cos(3, 7))).add(tmpG.set(tmpC).mul(cos(1, 7)));
+		tmpK.set(tmpD).mul(sin(2, 7)).sub(tmpG.set(tmpE).mul(sin(3, 7))).sub(tmpG.set(tmpF).mul(sin(1, 7)));
+		tmpL.set(tmpA).mul(cos(3, 7)).add(tmpG.set(tmpB).mul(cos(1, 7))).add(tmpG.set(tmpC).mul(cos(2, 7)));
+		tmpM.set(tmpD).mul(sin(3, 7)).sub(tmpG.set(tmpE).mul(sin(1, 7))).add(tmpG.set(tmpF).mul(sin(2, 7)));
+		out0.set(in0).add(tmpA).add(tmpB).add(tmpC);
+		out1.set(in0).add(tmpH).add(tmpI);
+		out2.set(in0).add(tmpJ).add(tmpK);
+		out3.set(in0).add(tmpL).add(tmpM);
+		out4.set(in0).add(tmpL).sub(tmpM);
+		out5.set(in0).add(tmpJ).sub(tmpK);
+		out6.set(in0).add(tmpH).sub(tmpI);
 	}
 
 	private void radix7(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
