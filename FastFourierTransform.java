@@ -78,16 +78,20 @@ public class FastFourierTransform {
 	}
 
 	private void radix2(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		int Q = N / 2;
-		dit(out, in, O, I, Q, 2 * S, F);
-		dit(out, in, O + Q, I + S, Q, 2 * S, F);
-		for (int k0 = O, k1 = O + Q, l1 = 0; k0 < O + Q; ++k0, ++k1, l1 += S) {
-			tin1.set(tf[l1]);
-			if (!F)
-				tin1.conj();
-			tin0.set(out[k0]);
-			tin1.mul(out[k1]);
-			dft2(out[k0], out[k1], tin0, tin1);
+		if (N == 2) {
+			dft2(out[O], out[O + 1], in[I], in[I + S]);
+		} else {
+			int Q = N / 2;
+			dit(out, in, O, I, Q, 2 * S, F);
+			dit(out, in, O + Q, I + S, Q, 2 * S, F);
+			for (int k0 = O, k1 = O + Q, l1 = 0; k0 < O + Q; ++k0, ++k1, l1 += S) {
+				tin1.set(tf[l1]);
+				if (!F)
+					tin1.conj();
+				tin0.set(out[k0]);
+				tin1.mul(out[k1]);
+				dft2(out[k0], out[k1], tin0, tin1);
+			}
 		}
 	}
 
@@ -102,25 +106,34 @@ public class FastFourierTransform {
 	}
 
 	private void radix3(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		int Q = N / 3;
-		dit(out, in, O, I, Q, 3 * S, F);
-		dit(out, in, O + Q, I + S, Q, 3 * S, F);
-		dit(out, in, O + 2 * Q, I + 2 * S, Q, 3 * S, F);
-		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, l1 = 0, l2 = 0;
-				k0 < O + Q; ++k0, ++k1, ++k2, l1 += S, l2 += 2 * S) {
-			tin1.set(tf[l1]);
-			tin2.set(tf[l2]);
-			if (!F) {
-				tin1.conj();
-				tin2.conj();
-			}
-			tin0.set(out[k0]);
-			tin1.mul(out[k1]);
-			tin2.mul(out[k2]);
+		if (N == 3) {
 			if (F)
-				fwd3(out[k0], out[k1], out[k2], tin0, tin1, tin2);
+				fwd3(out[O], out[O + 1], out[O + 2],
+					in[I], in[I + S], in[I + 2 * S]);
 			else
-				fwd3(out[k0], out[k2], out[k1], tin0, tin1, tin2);
+				fwd3(out[O], out[O + 2], out[O + 1],
+					in[I], in[I + S], in[I + 2 * S]);
+		} else {
+			int Q = N / 3;
+			dit(out, in, O, I, Q, 3 * S, F);
+			dit(out, in, O + Q, I + S, Q, 3 * S, F);
+			dit(out, in, O + 2 * Q, I + 2 * S, Q, 3 * S, F);
+			for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, l1 = 0, l2 = 0;
+					k0 < O + Q; ++k0, ++k1, ++k2, l1 += S, l2 += 2 * S) {
+				tin1.set(tf[l1]);
+				tin2.set(tf[l2]);
+				if (!F) {
+					tin1.conj();
+					tin2.conj();
+				}
+				tin0.set(out[k0]);
+				tin1.mul(out[k1]);
+				tin2.mul(out[k2]);
+				if (F)
+					fwd3(out[k0], out[k1], out[k2], tin0, tin1, tin2);
+				else
+					fwd3(out[k0], out[k2], out[k1], tin0, tin1, tin2);
+			}
 		}
 	}
 
@@ -190,33 +203,42 @@ public class FastFourierTransform {
 	}
 
 	private void radix5(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		int Q = N / 5;
-		dit(out, in, O, I, Q, 5 * S, F);
-		dit(out, in, O + Q, I + S, Q, 5 * S, F);
-		dit(out, in, O + 2 * Q, I + 2 * S, Q, 5 * S, F);
-		dit(out, in, O + 3 * Q, I + 3 * S, Q, 5 * S, F);
-		dit(out, in, O + 4 * Q, I + 4 * S, Q, 5 * S, F);
-		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0;
-				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S) {
-			tin1.set(tf[l1]);
-			tin2.set(tf[l2]);
-			tin3.set(tf[l3]);
-			tin4.set(tf[l4]);
-			if (!F) {
-				tin1.conj();
-				tin2.conj();
-				tin3.conj();
-				tin4.conj();
-			}
-			tin0.set(out[k0]);
-			tin1.mul(out[k1]);
-			tin2.mul(out[k2]);
-			tin3.mul(out[k3]);
-			tin4.mul(out[k4]);
+		if (N == 5) {
 			if (F)
-				fwd5(out[k0], out[k1], out[k2], out[k3], out[k4], tin0, tin1, tin2, tin3, tin4);
+				fwd5(out[O], out[O + 1], out[O + 2], out[O + 3], out[O + 4],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S]);
 			else
-				fwd5(out[k0], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4);
+				fwd5(out[O], out[O + 4], out[O + 3], out[O + 2], out[O + 1],
+					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S]);
+		} else {
+			int Q = N / 5;
+			dit(out, in, O, I, Q, 5 * S, F);
+			dit(out, in, O + Q, I + S, Q, 5 * S, F);
+			dit(out, in, O + 2 * Q, I + 2 * S, Q, 5 * S, F);
+			dit(out, in, O + 3 * Q, I + 3 * S, Q, 5 * S, F);
+			dit(out, in, O + 4 * Q, I + 4 * S, Q, 5 * S, F);
+			for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0;
+					k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S) {
+				tin1.set(tf[l1]);
+				tin2.set(tf[l2]);
+				tin3.set(tf[l3]);
+				tin4.set(tf[l4]);
+				if (!F) {
+					tin1.conj();
+					tin2.conj();
+					tin3.conj();
+					tin4.conj();
+				}
+				tin0.set(out[k0]);
+				tin1.mul(out[k1]);
+				tin2.mul(out[k2]);
+				tin3.mul(out[k3]);
+				tin4.mul(out[k4]);
+				if (F)
+					fwd5(out[k0], out[k1], out[k2], out[k3], out[k4], tin0, tin1, tin2, tin3, tin4);
+				else
+					fwd5(out[k0], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4);
+			}
 		}
 	}
 
@@ -244,81 +266,66 @@ public class FastFourierTransform {
 	}
 
 	private void radix7(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		int Q = N / 7;
-		dit(out, in, O, I, Q, 7 * S, F);
-		dit(out, in, O + Q, I + S, Q, 7 * S, F);
-		dit(out, in, O + 2 * Q, I + 2 * S, Q, 7 * S, F);
-		dit(out, in, O + 3 * Q, I + 3 * S, Q, 7 * S, F);
-		dit(out, in, O + 4 * Q, I + 4 * S, Q, 7 * S, F);
-		dit(out, in, O + 5 * Q, I + 5 * S, Q, 7 * S, F);
-		dit(out, in, O + 6 * Q, I + 6 * S, Q, 7 * S, F);
-		for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, k5 = O + 5 * Q, k6 = O + 6 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0, l5 = 0, l6 = 0;
-				k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, ++k5, ++k6, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S, l5 += 5 * S, l6 += 6 * S) {
-			tin1.set(tf[l1]);
-			tin2.set(tf[l2]);
-			tin3.set(tf[l3]);
-			tin4.set(tf[l4]);
-			tin5.set(tf[l5]);
-			tin6.set(tf[l6]);
-			if (!F) {
-				tin1.conj();
-				tin2.conj();
-				tin3.conj();
-				tin4.conj();
-				tin5.conj();
-				tin6.conj();
-			}
-			tin0.set(out[k0]);
-			tin1.mul(out[k1]);
-			tin2.mul(out[k2]);
-			tin3.mul(out[k3]);
-			tin4.mul(out[k4]);
-			tin5.mul(out[k5]);
-			tin6.mul(out[k6]);
-			if (F)
-				fwd7(out[k0], out[k1], out[k2], out[k3], out[k4], out[k5], out[k6], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
-			else
-				fwd7(out[k0], out[k6], out[k5], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
-		}
-	}
-
-	private void dit(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
-		if (N == 1) {
-			out[O].set(in[I]);
-		} else if (N == 2) {
-			dft2(out[O], out[O + 1], in[I], in[I + S]);
-		} else if (N == 3) {
-			if (F)
-				fwd3(out[O], out[O + 1], out[O + 2],
-					in[I], in[I + S], in[I + 2 * S]);
-			else
-				fwd3(out[O], out[O + 2], out[O + 1],
-					in[I], in[I + S], in[I + 2 * S]);
-		} else if (N == 5) {
-			if (F)
-				fwd5(out[O], out[O + 1], out[O + 2], out[O + 3], out[O + 4],
-					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S]);
-			else
-				fwd5(out[O], out[O + 4], out[O + 3], out[O + 2], out[O + 1],
-					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S]);
-		} else if (N == 7) {
+		if (N == 7) {
 			if (F)
 				fwd7(out[O], out[O + 1], out[O + 2], out[O + 3], out[O + 4], out[O + 5], out[O + 6],
 					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S], in[I + 5 * S], in[I + 6 * S]);
 			else
 				fwd7(out[O], out[O + 6], out[O + 5], out[O + 4], out[O + 3], out[O + 2], out[O + 1],
 					in[I], in[I + S], in[I + 2 * S], in[I + 3 * S], in[I + 4 * S], in[I + 5 * S], in[I + 6 * S]);
-		} else if (N % 7 == 0) {
-			radix7(out, in, O, I, N, S, F);
-		} else if (N % 5 == 0) {
-			radix5(out, in, O, I, N, S, F);
-		} else if (N % 3 == 0) {
-			radix3(out, in, O, I, N, S, F);
-		} else if (isPowerOfFour(N)) {
-			radix4(out, in, O, I, N, S, F);
 		} else {
-			radix2(out, in, O, I, N, S, F);
+			int Q = N / 7;
+			dit(out, in, O, I, Q, 7 * S, F);
+			dit(out, in, O + Q, I + S, Q, 7 * S, F);
+			dit(out, in, O + 2 * Q, I + 2 * S, Q, 7 * S, F);
+			dit(out, in, O + 3 * Q, I + 3 * S, Q, 7 * S, F);
+			dit(out, in, O + 4 * Q, I + 4 * S, Q, 7 * S, F);
+			dit(out, in, O + 5 * Q, I + 5 * S, Q, 7 * S, F);
+			dit(out, in, O + 6 * Q, I + 6 * S, Q, 7 * S, F);
+			for (int k0 = O, k1 = O + Q, k2 = O + 2 * Q, k3 = O + 3 * Q, k4 = O + 4 * Q, k5 = O + 5 * Q, k6 = O + 6 * Q, l1 = 0, l2 = 0, l3 = 0, l4 = 0, l5 = 0, l6 = 0;
+					k0 < O + Q; ++k0, ++k1, ++k2, ++k3, ++k4, ++k5, ++k6, l1 += S, l2 += 2 * S, l3 += 3 * S, l4 += 4 * S, l5 += 5 * S, l6 += 6 * S) {
+				tin1.set(tf[l1]);
+				tin2.set(tf[l2]);
+				tin3.set(tf[l3]);
+				tin4.set(tf[l4]);
+				tin5.set(tf[l5]);
+				tin6.set(tf[l6]);
+				if (!F) {
+					tin1.conj();
+					tin2.conj();
+					tin3.conj();
+					tin4.conj();
+					tin5.conj();
+					tin6.conj();
+				}
+				tin0.set(out[k0]);
+				tin1.mul(out[k1]);
+				tin2.mul(out[k2]);
+				tin3.mul(out[k3]);
+				tin4.mul(out[k4]);
+				tin5.mul(out[k5]);
+				tin6.mul(out[k6]);
+				if (F)
+					fwd7(out[k0], out[k1], out[k2], out[k3], out[k4], out[k5], out[k6], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
+				else
+					fwd7(out[k0], out[k6], out[k5], out[k4], out[k3], out[k2], out[k1], tin0, tin1, tin2, tin3, tin4, tin5, tin6);
+			}
 		}
+	}
+
+	private void dit(Complex[] out, Complex[] in, int O, int I, int N, int S, boolean F) {
+		if (isPowerOfFour(N))
+			radix4(out, in, O, I, N, S, F);
+		else if (N % 7 == 0)
+			radix7(out, in, O, I, N, S, F);
+		else if (N % 5 == 0)
+			radix5(out, in, O, I, N, S, F);
+		else if (N % 3 == 0)
+			radix3(out, in, O, I, N, S, F);
+		else if (N % 2 == 0)
+			radix2(out, in, O, I, N, S, F);
+		else if (N == 1)
+			out[O].set(in[I]);
 	}
 
 	void forward(Complex[] out, Complex[] in) {
